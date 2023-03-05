@@ -1,0 +1,141 @@
+﻿@model Rock_Paper_Scissors.ViewModels.GameViewModel;
+
+<div id="updateDiv">
+
+    @{
+        ViewData["Title"] = "Rock Paper Scissors";
+    }
+
+    <div class="text-center" style="margin-bottom: 40px;">
+        <h1 class="display-4">Rock Paper Scissors</h1>
+    </div>
+
+    @if (Model.IsCpuVsCpu)
+    {
+        
+    } else
+    {
+        <form method="post"
+            asp-area=""
+            asp-controller="Game"
+            asp-action="Shoot"
+            data-ajax="true"
+            data-ajax-method="post"
+            data-ajax-loading="#loading"
+            data-ajax-mode="replace"
+            data-ajax-update="#updateDiv">
+
+            <p class="text-center">Select your choice:</p>
+
+            <div class="buttons text-center mb-3">
+                <button type="submit" name="choice" value="rock" class="btn btn-outline-success">Rock</button>
+                <button type="submit" name="choice" value="paper" class="btn btn-outline-info">Paper</button>
+                <button type="submit" name="choice" value="scissors" class="btn btn-outline-danger">Scissors</button>
+            </div>
+
+        </form>
+    }
+
+    @if (Model.Player1Choice != null && Model.Player2Choice != null)
+    {
+        string player1Choice = Model.Player1Choice;
+        string player2Choice = Model.Player2Choice;
+
+        bool isWin = player1Choice == "rock" && player2Choice == "scissors" ||
+            player1Choice == "paper" && player2Choice == "rock" ||
+            player1Choice == "scissors" && player2Choice == "paper";
+
+        bool isDraw = player1Choice == player2Choice;
+
+        <div class="card mb-3">
+            <div class="card-body">
+        @if (Model.IsCpuVsCpu)
+        {
+            <p class="text-center">
+                Player 1 choice:
+            </p>
+        } else
+        {
+            <p class="text-center">
+                Your choice:
+            </p>
+        }              
+
+        <div class="text-center mb-3">
+            @if (Model.Player1Choice == "rock")
+            {
+                <div class="btn btn-outline-success">Rock</div>
+            }
+            else if (Model.Player1Choice == "paper")
+            {
+                <div class="btn btn-outline-info">Paper</div>
+            } else
+            {
+                <div class="btn btn-outline-danger">Scissors</div>
+            }
+        </div>
+
+        @if (Model.IsCpuVsCpu)
+        {
+            <p class="text-center">
+                Player 2 choice:
+            </p>
+        } else
+        {
+            <p class="text-center">
+                CPU player choice:
+            </p>
+        }   
+
+        <div class="text-center mb-3">
+            @if (Model.Player2Choice == "rock")
+            {
+                <div class="btn btn-outline-success">Rock</div>
+            }
+            else if (Model.Player2Choice == "paper")
+            {
+                <div class="btn btn-outline-info">Paper</div>
+            }
+            else
+            {
+                <div class="btn btn-outline-danger">Scissors</div>
+            }
+        </div>      
+
+        
+            </div>
+        </div>
+
+        if (isWin)
+        {
+            <div class="alert alert-success text-center">
+                You win!
+            </div>
+        } else if (isDraw)
+        {
+            <div class="alert alert-info text-center">
+                It's a draw.
+            </div>
+        } else
+        {
+            <div class="alert alert-danger text-center">
+                You lose...
+            </div>
+        }        
+    }
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ajax-unobtrusive@3.2.6/dist/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+        $(document).ready(function() {
+
+        })
+        
+    </script>
+}
+
+
+

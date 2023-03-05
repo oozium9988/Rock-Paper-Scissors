@@ -1,8 +1,84 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Rock_Paper_Scissors.ViewModels.IndexViewModel
+
+@{
+    ViewData["Title"] = "Settings";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Settings</h1>
 </div>
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+{
+    <div class="card bg-light mb-3">
+        <div class="card-body">
+            <p>Game Mode:</p>
+
+            <div class="form-group mb-3">
+                <label class="radio-label">
+                    @Html.RadioButtonFor(m => m.IsCpuVsCpu, false, new { @id = "radiobutton_MeVsCpu" }) Me vs CPU
+                </label>
+                <label class="radio-label">
+                    @Html.RadioButtonFor(m => m.IsCpuVsCpu, true, new { @id = "radiobutton_CpuVsCpu" }) CPU vs CPU
+                </label>
+            </div>
+        </div>       
+    </div>
+
+    <div class="card bg-light mb-3">
+        <div class="card-body">
+            <p>CPU Difficulty:</p>
+
+            <div class="form-group mb-3">
+                <label class="radio-label">
+                    @Html.RadioButtonFor(m => m.Cpu1Difficulty, "Beginner") Beginner
+                </label>
+                <label class="radio-label">
+                    @Html.RadioButtonFor(m => m.Cpu1Difficulty, "Intermediate") Intermediate
+                </label>
+                <label class="radio-label">
+                    @Html.RadioButtonFor(m => m.Cpu1Difficulty, "Advanced") Advanced
+                </label>
+            </div>
+        </div>        
+    </div>
+
+    <div class="card bg-light mb-3" id="div_DifficultyCpu2" style="display:none;">
+        <div class="card-body">
+            <p>CPU 2 Difficulty:</p>
+
+            <div class="form-group mb-3">
+                <label class="radio-label">
+                    @Html.RadioButtonFor(m => m.Cpu2Difficulty, "Beginner") Beginner
+                </label>
+                <label class="radio-label">
+                    @Html.RadioButtonFor(m => m.Cpu2Difficulty, "Intermediate") Intermediate
+                </label>
+                <label class="radio-label">
+                    @Html.RadioButtonFor(m => m.Cpu2Difficulty, "Advanced") Advanced
+                </label>
+            </div>
+        </div>       
+    </div>
+
+    <input type="submit" Value="Start Game" class="btn btn-primary" />
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var difficultyCpu2 = $('#div_DifficultyCpu2');
+
+            $('input[type=radio][name=IsCpuVsCpu]').change(function () {
+                var isCpuVsCpu = $('#radiobutton_CpuVsCpu').is(':checked');
+                if (isCpuVsCpu) {
+                    difficultyCpu2.show();                    
+                }
+                else {
+                    difficultyCpu2.hide();
+                }
+            });           
+        })
+    </script>
+}
+

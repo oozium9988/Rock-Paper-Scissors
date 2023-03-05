@@ -1,4 +1,4 @@
-namespace Rock_Paper_Scissors.Models
+namespace Rock_Paper_Scissors.ViewModels
 {
     public class ErrorViewModel
     {

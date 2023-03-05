@@ -20,3 +20,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.radio-label {
+    display: block;
+    margin-left: 1rem;
+    margin-bottom: 0;
+}
+
+.buttons .btn {
+    margin-left: 1rem;
+}
