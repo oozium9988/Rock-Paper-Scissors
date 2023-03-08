@@ -1,15 +1,12 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Rock_Paper_Scissors.Models;
 using Rock_Paper_Scissors.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
+using static Rock_Paper_Scissors.Enums.Enums;
 
-namespace Chess.Controllers
+namespace Rock_Paper_Scissors.Controllers
 {
     public class HomeController : Controller
     {
@@ -27,23 +24,33 @@ namespace Chess.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index([Bind("IsCpuVsCpu, Cpu1Difficulty, Cpu2Difficulty")] IndexViewModel indexViewModel)
+        public IActionResult Index([Bind("Index_IsCpuVsCpu, Index_CpuDifficulty1, Index_CpuDifficulty2")] IndexViewModel indexViewModel)
         {
             if (!ModelState.IsValid)
             {
                 return View(indexViewModel);
             }
 
-            bool isCpuVsCpu = indexViewModel.IsCpuVsCpu;
-            string difficulty1 = indexViewModel.Cpu1Difficulty;
-            string difficulty2 = indexViewModel.Cpu2Difficulty;
+            bool isCpuVsCpu = indexViewModel.Index_IsCpuVsCpu.Value;
 
-            return View("Game", new GameViewModel { IsCpuVsCpu = isCpuVsCpu, Cpu1Difficulty = difficulty1, Cpu2Difficulty = difficulty2 });
-        }
+            Enum_CpuDifficulty difficulty1 = indexViewModel.Index_CpuDifficulty1.Value;
+            Enum_CpuDifficulty? difficulty2 = isCpuVsCpu ? indexViewModel.Index_CpuDifficulty2.Value : null;
 
-        public IActionResult Privacy()
-        {
-            return View();
+            if (HttpContext.Session.GetString("GameResults") == null)
+            {
+                var gameResults = new List<GameResultInfo>();
+                HttpContext.Session.SetString("GameResults", JsonConvert.SerializeObject(gameResults));
+            }
+
+            List<GameResultInfo> allResults = JsonConvert.DeserializeObject<List<GameResultInfo>>(HttpContext.Session.GetString("GameResults"));
+
+            var results = allResults.FindAll(r => r.CpuDifficulty1 == difficulty1 && r.CpuDifficulty2 == difficulty2 && r.IsCpuVsCpu == isCpuVsCpu);
+
+            int wins = results.Count(r => r.ResultForPlayer1 == Enum_Result.Win);
+            int losses = results.Count(r => r.ResultForPlayer1 == Enum_Result.Loss);
+            int draws = results.Count(r => r.ResultForPlayer1 == Enum_Result.Draw);
+
+            return View("Game", new GameViewModel() { Game_IsCpuVsCpu = isCpuVsCpu, Game_CpuDifficulty1 = difficulty1, Game_CpuDifficulty2 = difficulty2, Game_Wins = wins, Game_Losses = losses, Game_Draws = draws });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

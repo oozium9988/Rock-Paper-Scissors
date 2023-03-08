@@ -1,15 +1,20 @@
-using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+using static Rock_Paper_Scissors.Enums.Enums;
 
 namespace Rock_Paper_Scissors.ViewModels
 {
     public class GameViewModel
     {
-        public bool IsCpuVsCpu { get; set; }
-        public string Cpu1Difficulty { get; set; }
-        public string? Cpu2Difficulty { get; set; }
-        public string? Player1Choice { get; set; }
-        public string? Player2Choice { get; set; }
-    }          
+        public bool Game_IsCpuVsCpu { get; set; }
+        public Enum_CpuDifficulty Game_CpuDifficulty1 { get; set; }
+        public Enum_CpuDifficulty? Game_CpuDifficulty2 { get; set; }
+        public Enum_Choice? Game_PlayerChoice1 { get; set; }
+        public Enum_Choice? Game_PlayerChoice2 { get; set; }
+        public int Game_BeginnerCpuMoveCount1 { get; set; }
+        public int Game_BeginnerCpuMoveCount2 { get; set; }
+        public Enum_Result Game_ResultForPlayer1 { get; set; }
+        public int Game_Wins { get; set; }
+        public int Game_Draws { get; set; }
+        public int Game_Losses { get; set; }
+        public bool Game_ShowStats { get; set; }
+    }
 }

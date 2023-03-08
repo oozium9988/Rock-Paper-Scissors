@@ -1,4 +1,8 @@
-﻿@model Rock_Paper_Scissors.ViewModels.GameViewModel;
+﻿@using Newtonsoft.Json;
+@using Rock_Paper_Scissors.Models;
+@using static Rock_Paper_Scissors.Enums.Enums;
+
+@model Rock_Paper_Scissors.ViewModels.GameViewModel;
 
 <div id="updateDiv">
 
@@ -6,13 +10,52 @@
         ViewData["Title"] = "Rock Paper Scissors";
     }
 
-    <div class="text-center" style="margin-bottom: 40px;">
+    <div class="text-center mt-5" style="margin-bottom: 40px;">
         <h1 class="display-4">Rock Paper Scissors</h1>
     </div>
 
-    @if (Model.IsCpuVsCpu)
-    {
+    <div class="card bg-light mb-3">
+        <div class="card-body">
+            @if (Model.Game_IsCpuVsCpu)
+            {
+                <strong>CPU 1 Difficulty:</strong> @Model.Game_CpuDifficulty1.ToString()<br/>
+                <strong>CPU 2 Difficulty:</strong> @Model.Game_CpuDifficulty2.ToString()<br/>
+            } else
+            {
+                <strong>CPU Difficulty:</strong> @Model.Game_CpuDifficulty1.ToString()<br/>
+            }            
+            <strong>Wins:</strong> @Model.Game_Wins<br/>
+            <strong>Draws:</strong> @Model.Game_Draws<br/>
+            <strong>Losses:</strong> @Model.Game_Losses<br/>
+        </div>
         
+    </div>
+
+    @if (Model.Game_IsCpuVsCpu)
+    {
+        <form method="post"
+            asp-area=""
+            asp-controller="Game"
+            asp-action="CpuMove"
+            data-ajax="true"
+            data-ajax-method="post"
+            data-ajax-loading="#loading"
+            data-ajax-mode="replace"
+            data-ajax-update="#updateDiv">
+
+            <div class="buttons text-center mb-3">
+                <button type="submit" class="btn btn-outline-primary" style="margin-right: 1rem;">Do CPU Move</button>
+            </div>
+
+            @Html.HiddenFor(model => Model.Game_IsCpuVsCpu)
+            @Html.HiddenFor(model => Model.Game_CpuDifficulty1)
+            @Html.HiddenFor(model => Model.Game_CpuDifficulty2)
+
+            <input type="hidden" name="beginnerCount1" value="@Model.Game_BeginnerCpuMoveCount1" />
+            <input type="hidden" name="beginnerCount2" value="@Model.Game_BeginnerCpuMoveCount2" />
+            <input type="hidden" name="showStatsHidden" value="@Model.Game_ShowStats.ToString()" />
+
+        </form>
     } else
     {
         <form method="post"
@@ -28,28 +71,28 @@
             <p class="text-center">Select your choice:</p>
 
             <div class="buttons text-center mb-3">
-                <button type="submit" name="choice" value="rock" class="btn btn-outline-success">Rock</button>
-                <button type="submit" name="choice" value="paper" class="btn btn-outline-info">Paper</button>
-                <button type="submit" name="choice" value="scissors" class="btn btn-outline-danger">Scissors</button>
+                <button type="submit" name="choice" value="Rock" class="btn btn-outline-success">Rock</button>
+                <button type="submit" name="choice" value="Paper" class="btn btn-outline-info">Paper</button>
+                <button type="submit" name="choice" value="Scissors" class="btn btn-outline-danger">Scissors</button>
             </div>
+
+            @Html.HiddenFor(model => Model.Game_IsCpuVsCpu)
+            @Html.HiddenFor(model => Model.Game_CpuDifficulty1)
+            @Html.HiddenFor(model => Model.Game_CpuDifficulty2)
+            @*@Html.HiddenFor(model => Model.Game_ShowStats)*@
+
+            <input type="hidden" name="beginnerCount" value="@Model.Game_BeginnerCpuMoveCount2" />
+            <input type="hidden" name="showStatsHidden" value="@Model.Game_ShowStats.ToString()" />
 
         </form>
     }
 
-    @if (Model.Player1Choice != null && Model.Player2Choice != null)
+    @if (Model.Game_PlayerChoice1.HasValue && Model.Game_PlayerChoice2.HasValue)
     {
-        string player1Choice = Model.Player1Choice;
-        string player2Choice = Model.Player2Choice;
-
-        bool isWin = player1Choice == "rock" && player2Choice == "scissors" ||
-            player1Choice == "paper" && player2Choice == "rock" ||
-            player1Choice == "scissors" && player2Choice == "paper";
-
-        bool isDraw = player1Choice == player2Choice;
-
         <div class="card mb-3">
             <div class="card-body">
-        @if (Model.IsCpuVsCpu)
+
+        @if (Model.Game_IsCpuVsCpu)
         {
             <p class="text-center">
                 Player 1 choice:
@@ -62,20 +105,20 @@
         }              
 
         <div class="text-center mb-3">
-            @if (Model.Player1Choice == "rock")
+            @if (Model.Game_PlayerChoice1 == Enum_Choice.Rock)
             {
-                <div class="btn btn-outline-success">Rock</div>
+                <div class="outline outline-success">Rock</div>
             }
-            else if (Model.Player1Choice == "paper")
+            else if (Model.Game_PlayerChoice1 == Enum_Choice.Paper)
             {
-                <div class="btn btn-outline-info">Paper</div>
+                <div class="outline outline-info">Paper</div>
             } else
             {
-                <div class="btn btn-outline-danger">Scissors</div>
+                <div class="outline outline-danger">Scissors</div>
             }
         </div>
 
-        @if (Model.IsCpuVsCpu)
+        @if (Model.Game_IsCpuVsCpu)
         {
             <p class="text-center">
                 Player 2 choice:
@@ -88,17 +131,17 @@
         }   
 
         <div class="text-center mb-3">
-            @if (Model.Player2Choice == "rock")
+            @if (Model.Game_PlayerChoice2 == Enum_Choice.Rock)
             {
-                <div class="btn btn-outline-success">Rock</div>
+                <div class="outline outline-success">Rock</div>
             }
-            else if (Model.Player2Choice == "paper")
+            else if (Model.Game_PlayerChoice2 == Enum_Choice.Paper)
             {
-                <div class="btn btn-outline-info">Paper</div>
+                <div class="outline outline-info">Paper</div>
             }
             else
             {
-                <div class="btn btn-outline-danger">Scissors</div>
+                <div class="outline outline-danger">Scissors</div>
             }
         </div>      
 
@@ -106,34 +149,126 @@
             </div>
         </div>
 
-        if (isWin)
+
+        @if (Model.Game_IsCpuVsCpu)
         {
-            <div class="alert alert-success text-center">
-                You win!
-            </div>
-        } else if (isDraw)
-        {
-            <div class="alert alert-info text-center">
-                It's a draw.
-            </div>
+            if (Model.Game_ResultForPlayer1 == Enum_Result.Win)
+            {
+                <div class="alert alert-success text-center">
+                    Player 1 wins!
+                </div>
+            }
+            else if (Model.Game_ResultForPlayer1 == Enum_Result.Draw)
+            {
+                <div class="alert alert-info text-center">
+                    It's a draw.
+                </div>
+            } else
+            {
+                <div class="alert alert-danger text-center">
+                    Player 1 loses...
+                </div>
+            }
         } else
         {
-            <div class="alert alert-danger text-center">
-                You lose...
-            </div>
-        }        
+            if (Model.Game_ResultForPlayer1 == Enum_Result.Win)
+            {
+                <div class="alert alert-success text-center">
+                    You win!
+                </div>
+            }
+            else if (Model.Game_ResultForPlayer1 == Enum_Result.Draw)
+            {
+                <div class="alert alert-info text-center">
+                    It's a draw.
+                </div>
+            } else
+            {
+                <div class="alert alert-danger text-center">
+                    You lose...
+                </div>
+            } 
+        }              
     }
 
+    <div class="buttons text-center mb-3 mt-5">
+        @using (Html.BeginForm("ChangeSettings", "Game", FormMethod.Post))
+        {
+            <input type="submit" Value="Change Settings" class="btn btn-secondary" style="margin-right: 1rem;"/>
+
+            @Html.HiddenFor(model => Model.Game_IsCpuVsCpu)
+            @Html.HiddenFor(model => Model.Game_CpuDifficulty1)
+            @Html.HiddenFor(model => Model.Game_CpuDifficulty2)
+            @Html.HiddenFor(model => Model.Game_ShowStats)
+        }       
+    </div>
+
+    <div class="buttons text-center mb-3">
+        <form method="post"
+            asp-area=""
+            asp-controller="Game"
+            asp-action="ShowHideStats"
+            data-ajax="true"
+            data-ajax-method="post"
+            data-ajax-loading="#loading"
+            data-ajax-mode="replace"
+            data-ajax-update="#updateDiv">
+
+            <div class="buttons text-center mb-3">
+                @if (Model.Game_ShowStats)
+                {
+                    <button type="submit" name="showStats" value="false" class="btn btn-primary" style="margin-right: 1rem;">Hide Stats</button>
+                } else
+                {
+                    <button type="submit" name="showStats" value="true" class="btn btn-primary" style="margin-right: 1rem;">Show Stats</button>
+                }                             
+            </div>
+
+            @foreach (var prop in Model.GetType().GetProperties())
+            {
+                @Html.Hidden(prop.Name);
+            }
+        </form>
+    </div>
+    
+    @if (Model.Game_ShowStats)
+    {
+        <div class="card bg-dark mb-3">
+            <div class="card-body">
+            @{
+                var wins = Model.Game_Wins;
+                var losses = Model.Game_Losses;
+                var draws = Model.Game_Draws;
+
+                var total = wins + losses + draws;
+
+                decimal winRate = 0;
+                decimal lossRate = 0;
+                decimal drawRate = 0;
+
+                if (total > 0)
+                {
+                    winRate = ((decimal)wins / (decimal)total) * 100;
+                    lossRate = ((decimal)losses / (decimal)total) * 100;
+                    drawRate = ((decimal)draws / (decimal)total) * 100;
+                }             
+            }
+
+                <strong>Win Rate:</strong> @winRate.ToString("0.00")%<br/>
+                <strong>Draw Rate:</strong> @drawRate.ToString("0.00")%<br/>
+                <strong>Loss Rate:</strong> @lossRate.ToString("0.00")%<br/>            
+            </div>
+        </div>
+    }  
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-ajax-unobtrusive@3.2.6/dist/jquery.unobtrusive-ajax.min.js"></script>
     <script>
-        $(document).ready(function() {
-
+        $(document).ready(function () {
+                          
         })
-        
     </script>
 }
 
